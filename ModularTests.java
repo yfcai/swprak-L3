@@ -12,6 +12,7 @@ import java.net.*;
 import java.io.*;
 
 public class ModularTests {
+    // declare string constant as final variable to guard against typos
     public static final String localhost = "localhost";
 
     @Test
@@ -99,8 +100,13 @@ public class ModularTests {
 
         // server mock-up
         try (ServerSocket serverSocket = new ServerSocket(0)) {
+
             // port number, to be communicated to the client thread
-            // we avoid concurrency issues by sharing only final, primitive data
+            //
+            // primitive type `int` is thread-safe only if it's final.
+            // `javac` is smart enough to report an error if `port`
+            // were not declared final.
+            //
             final int port = serverSocket.getLocalPort();
 
             // start client in a separate thread

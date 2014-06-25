@@ -57,11 +57,11 @@ public class NaiveClient {
             do {
                 line = stdin.readLine();
                 System.out.println("sending: " + line);
-                toServer.println(line); // will catch IOException thrown in underlying stream!!!
-                if (toServer.checkError()) // show this by sending nonempty nonnumeral lines
+                toServer.println(line); // PrintWriter catches IOException thrown in underlying stream!
+                if (toServer.checkError()) // thus we must manually check for possible errors
                     throw new RuntimeException("send error!");
             }
-            while (! "".equals(line)); // try typing `!=` ??
+            while (! "".equals(line));
 
             // get the sum from the server
             int sum = Integer.parseInt(fromServer.readLine());

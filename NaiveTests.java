@@ -33,6 +33,19 @@ public class NaiveTests {
             Thread serverThread = new Thread() {
                     public void run() {
                         try {
+                            // Note that `serverSocket` is used
+                            // in server thread, which means it *must not*
+                            // be used in the main thread after this point.
+                            // Otherwise we might run into synchronization
+                            // problems. Unfortunately, we cannot simply
+                            // end the try-with-resources block after
+                            // `serverThread.start()`, because the server
+                            // socket would be closed before the client tries
+                            // to connect to it.
+                            //
+                            // ref.
+                            // http://stackoverflow.com/a/898232
+                            //
                             TestableServer.runServer(serverSocket);
                         }
                         catch (IOException e) {
