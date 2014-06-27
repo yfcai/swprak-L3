@@ -77,6 +77,8 @@ public class NaiveTests {
 
                 toServer.println("positive");
 
+                assertFalse(toServer.checkError());
+
                 serverThread.join();
             }
         }

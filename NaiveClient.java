@@ -59,7 +59,7 @@ public class NaiveClient {
                 System.out.println("sending: " + line);
                 toServer.println(line); // PrintWriter catches IOException thrown in underlying stream!
                 if (toServer.checkError()) // thus we must manually check for possible errors
-                    throw new RuntimeException("send error!");
+                    throw new RuntimeException("error on send");
             }
             while (! "".equals(line));
 
@@ -73,7 +73,7 @@ public class NaiveClient {
 
             toServer.println(reply);
             if (toServer.checkError())
-                throw new RuntimeException("send error");
+                throw new IOException("error on send");
         }
     }
 }

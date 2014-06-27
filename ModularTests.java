@@ -37,6 +37,13 @@ public class ModularTests {
         testClient(clientInput, serverResponse, clientReply);
     }
 
+    // send a line to server and check for errors
+    void sendln(PrintWriter toSocket, Object line) throws IOException {
+        toSocket.println(line.toString());
+        if (toSocket.checkError())
+            throw new IOException("error on send");
+    }
+
     public void testServer(Integer[] clientInput, String serverResponse, String clientReply)
         throws IOException, InterruptedException
     {
@@ -70,20 +77,19 @@ public class ModularTests {
             try (Socket clientSocket = new Socket(localhost, port);
                  BufferedReader fromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                  PrintWriter toServer = new PrintWriter(clientSocket.getOutputStream(), true /* autoflush */);
-
                  ){
 
                 // send client input to server
                 for (Integer input : clientInput)
-                    toServer.println(input);
+                    sendln(toServer, input);
 
                 // If this line is commented out, then deadlock will occur.
                 // Press ctrl+\ (SIGQUIT) to dump stack traces of all threads.
-                toServer.println();
+                sendln(toServer, "");
 
                 assertEquals(serverResponse, fromServer.readLine());
 
-                toServer.println(clientReply);
+                sendln(toServer, clientReply);
 
                 serverThread.join();
             }
@@ -131,7 +137,8 @@ public class ModularTests {
 
             // send server response, compare client reply
             try (Socket clientSocket = serverSocket.accept()) {
-                new PrintWriter(clientSocket.getOutputStream(), true).println(serverResponse);
+                PrintWriter toClient = new PrintWriter(clientSocket.getOutputStream(), true);
+                sendln(toClient, serverResponse);
                 BufferedReader fromClient = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
                 // check that client sends the input back

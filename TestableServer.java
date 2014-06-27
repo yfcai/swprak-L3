@@ -34,25 +34,27 @@ public class TestableServer {
              Socket socket = serverSocket.accept();
 
              // read what the client sends
-             BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+             BufferedReader fromClient = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
              // send things to client
-             PrintWriter writer = new PrintWriter(socket.getOutputStream(), true /* autoflush */);
+             PrintWriter toClient = new PrintWriter(socket.getOutputStream(), true /* autoflush */);
 
              ){
 
             String line;
             int sum = 0;
 
-            while ((line = reader.readLine()).length() > 0) {
+            while ((line = fromClient.readLine()).length() > 0) {
                 System.out.println("received: " + line);
                 sum += Integer.parseInt(line);
             }
 
             System.out.println("sending sum = " + sum);
-            writer.println(sum);
+            toClient.println(sum);
+            if (toClient.checkError())
+                throw new IOException("error on send");
 
-            line = reader.readLine();
+            line = fromClient.readLine();
             System.out.println(String.format("client says %d is %s", sum, line));
         }
     }
