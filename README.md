@@ -10,3 +10,4 @@ The source files are intended to be read in the following order:
 4. [NaiveTests.java](NaiveTests.java)
 5. [TestableClient.java](TestableClient.java)
 6. [ModularTests.java](ModularTests.java)
+7. [AnnotatedServerTests.java](AnnotatedServerTests.java)
